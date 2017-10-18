@@ -1,0 +1,55 @@
+router {
+    mode: interior
+    id: ${ROUTER_NAME}
+}
+
+listener {
+    addr: 0.0.0.0
+    port: 5000
+    authenticatePeer: no
+    role: inter-router
+}
+
+listener {
+    host: 0.0.0.0
+    port: 6000
+    authenticatePeer: no
+}
+
+listener {
+    host: 0.0.0.0
+    port: 8080
+    authenticatePeer: no
+    http: yes
+}
+
+connector {
+    name: INTER_ROUTER_D
+    addr: router-d.${OPENSHIFT_PROJECT}.svc.cluster.local
+    port: 5000
+    role: inter-router
+}
+
+connector {
+    name: UPPOTTERY
+    addr: broker.${OPENSHIFT_PROJECT}.svc.cluster.local
+    port: 5672
+    role: route-container
+}
+
+address {
+    prefix: ${APPLICATION_ROUTING_ADDRESS_PREFIX}
+    waypoint: yes
+}
+
+autoLink {
+    addr: ${APPLICATION_ROUTING_ADDRESS_FQN}
+    connection: UPPOTTERY
+    dir: in
+}
+
+autoLink {
+    addr: ${APPLICATION_ROUTING_ADDRESS_FQN}
+    connection: UPPOTTERY
+    dir: out
+}
